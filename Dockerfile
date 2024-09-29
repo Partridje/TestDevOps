@@ -11,7 +11,7 @@ RUN go mod download
 
 # Копируем исходный код из поддиректории cv-devops в рабочую директорию контейнера
 COPY cv-devops/*.go ./
-COPY cv-devops/resume.html ./
+COPY resume.html ./
 
 # Собираем приложение
 RUN go build -o cv-devops
