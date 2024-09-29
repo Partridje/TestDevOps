@@ -1,14 +1,23 @@
-#Phase one
+# Используем официальный образ Go в качестве базового
+FROM golang:latest
 
-FROM node:alpine as builder
+# Устанавливаем рабочую директорию внутри контейнера
 WORKDIR /app
-COPY package.json .
-RUN npm install
-COPY . .
-RUN npm run build
 
-#Phase two
+# Копируем файлы модулей и загружаем зависимости
+COPY go.mod ./
+COPY go.sum ./
+RUN go mod download
 
-FROM nginx
-COPY --from=builder /app/build /usr/share/nginx/html
+# Копируем исходный код из поддиректории cv-devops в рабочую директорию контейнера
+COPY cv-devops/*.go ./
+COPY cv-devops/resume.html ./
 
+# Собираем приложение
+RUN go build -o cv-devops
+
+# Указываем порт, на котором будет работать приложение
+EXPOSE 8080
+
+# Команда для запуска приложения
+CMD ["./cv-devops"]
